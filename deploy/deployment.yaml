@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bootcamp-backend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bootcamp-backend
+  template:
+    metadata:
+      labels:
+        app: bootcamp-backend
+    spec:
+      containers:
+        - name: mi-app
+          image: ghcr.io/clacklast/bootcamp1:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: MONGO_HOST
+              value: "192.168.100.77"
+
+            - name: MONGO_USER
+              value: "blockbuster"
+            - name: MONGO_PASS
+              value: "RtwimQG1F5J6rLt8PmpX3rD7W"
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DB
+              value: "movies"
+            - name: MINIO_ENDPOINT
+              value: "192.168.100.77:9000"
+            - name: MINIO_ACCESS_KEY
+              value: "movies"
+            - name: MINIO_SECRET_KEY
+              value: "beyzaga_rulez"
+
+              

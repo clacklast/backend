@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-jose[crytography]
+passlib[bcrypt]
+bcrypt
+motor
+beanie
+minio
