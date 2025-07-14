@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-  
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: clacklast/backend
@@ -12,6 +12,7 @@ env:
 permissions:
   contents: read
   packages: write  
+  
 jobs:
   build:
     runs-on: ubuntu-latest
