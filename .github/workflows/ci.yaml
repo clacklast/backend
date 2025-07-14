@@ -9,7 +9,9 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: clacklast/backend
   DEPLOYMENYT_NAME: bootcamp-backend-deployment
-  
+permissions:
+  contents: read
+  packages: write  
 jobs:
   build:
     runs-on: ubuntu-latest
