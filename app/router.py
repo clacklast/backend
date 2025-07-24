@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query, Form, File, UploadFile, Depends
+from fastapi import APIRouter, HTTPException, Query, Form, File, UploadFile, Depends, Request
 from typing import Optional
 from app.models import Movie, MovieUpdate
 from datetime import timedelta
@@ -6,6 +6,27 @@ from app.security import verify_token, authenticate_user, create_access_token
 from app.crud import create_movie, update_movie, upload_movie_image, find_movie, remove_movie, get_all_movies
 from app.storage import client, BUCKET
 from beanie import PydanticObjectId
+from fluent import handler
+import logging
+fluent_host="192.168.100.77"
+fluent_port=24224
+app_name="bootcamp2-backend"
+fluent_handler = handler.FluentHandler(app_name, host=fluent_host, port=fluent_port)
+formatter = handler.FluentRecordFormatter({
+    'job': app_name,
+    'host': '%(hostname)s',
+    'where': '%(module)s.%(funcName)s',
+    'path': '%(path)s',
+    'request': '%(request)s',
+    'ip': '%(ip)s',
+    'message': '%(message)s'
+})
+fluent_handler.setFormatter(formatter)
+
+logger = logging.getLogger("fastapi")
+logger.setLevel(logging.INFO)
+logger.addHandler(fluent_handler)
+
 
 router=APIRouter()
 
@@ -40,8 +61,14 @@ async def post_movie(
 
 @router.get("/movies/{id_movie}", response_model=Movie)
 async def get_movie(
-        id_movie: str
+        id_movie: str,
+        request: Request,
 ):
+    logger.info("Request a /movies/{id_movie}", extra={
+        'path': request.url.path,
+        'ip': request.client.host,
+        'request': request.method,
+    })
     return await find_movie(id_movie)
 
 # @router.put("/movies/{movie_id}", response_model=Movie)
@@ -76,7 +103,12 @@ async def delete_movie(movie_id: str):
     return {"message": "Película eliminada correctamente"}
 
 @router.get("/movies", summary='List all movies', response_model=list[Movie])
-async def list_movies():
+async def list_movies(request: Request):
+    logger.info("Request a /movies/{id_movie}", extra={
+        'path': request.url.path,
+        'ip': request.client.host,
+        'request': request.method,
+    })
     return await get_all_movies()
 
 
